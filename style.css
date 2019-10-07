@@ -12,9 +12,6 @@ body {
     padding: 10px;
     margin: 0 auto;
     text-align: center;
-    background-color: lightgray;
-    width: 400px;
-    height: 400px;
 }
 #title {
     font-size: 150%;

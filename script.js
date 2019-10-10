@@ -3,16 +3,24 @@ const w = 800,
 
 const margin = {top: 50, right: 30, bottom: 20, left: 30};
 
+
+const svg = d3.select("#bar-chart")
+.append("svg")
+.style("background-color", "gray")
+.attr("width", w +margin.left + margin.right)
+.attr("height", h + margin.top + margin.bottom)
+.append("g")
+.attr("transform", "translate(" + margin.top + "," + margin.bottom + ")");
+
+
+let tooltip = d3.select("#bar-chart")
+.append("div")
+.attr("id", "tooltip")
+.style("opacity", 0);
+
+
 function drawBar(dataset) {
-
-    const svg = d3.select("#bar-chart")
-    .append("svg")
-    .style("background-color", "gray")
-    .attr("width", w +margin.left + margin.right)
-    .attr("height", h + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.top + "," + margin.bottom + ")");
-
+    
     let yearsDate = dataset.map(item => {
         return item[0];
     });
@@ -34,15 +42,11 @@ function drawBar(dataset) {
     .call(xAxis);
 
     let gdp = dataset.map(item => item[1]);
-    
+
     gdp.push(gdp[gdp.length-1] + (20000 - gdp[gdp.length-1]));
-    
-    let maxGdp = d3.max(gdp, d => d);
-    
-    console.log(gdp);
-    
+
     let yAxisScale = d3.scaleLinear()
-    .domain([0, maxGdp])
+    .domain([0, gdp[gdp.length-2]])
     .range([h, 0]);
 
     let yAxis = d3.axisLeft(yAxisScale);
@@ -61,8 +65,38 @@ function drawBar(dataset) {
         .attr("x", (d, i) => i * (w/dataset.length))
         .attr("y", d => yAxisScale(d[1]))
         .attr("width", d => w/dataset.length)
-        .attr("height", d => h - yAxisScale(d[1]));
+        .attr("height", d => h - yAxisScale(d[1]))
+        .on("mouseover", function(d, i) {
+        tooltip.transition()
+            .duration(200)
+            .style("opacity", .7)
+            .style("left", (d3.event.pageX - 20) +'px')
+            .style("top", (d3.event.pageY + 15) + 'px')
 
+        let quarter;
+        var month = d[0].substr(5, 2);
+
+        if(month === '01') {
+            quarter = 'Q1';
+        } else if(month === '04') {
+            quarter = 'Q2';
+        } else if(month === '07') {
+            quarter = 'Q3';
+        } else if(month === '10') {
+            quarter = 'Q4';
+        }
+        
+        let year = d[0].substr(0,4) + ' ' + quarter;
+
+        tooltip.html("<p>" + year + "</p><p>$" + d[1] + " billions");
+        d3.select(this).style("fill", "#fff");
+    })
+    .on("mouseout", function() {
+        tooltip.transition()
+            .duration(300)
+            .style("opacity", 0);
+        d3.select(this).style("fill", "cyan");
+    });
 }
 
 

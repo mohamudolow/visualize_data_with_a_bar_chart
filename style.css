@@ -16,3 +16,11 @@ body {
 #title {
     font-size: 150%;
 }
+div#tooltip {
+    position: absolute;
+    color: #232323;
+    background-color: lightgray;
+    padding: 5px;
+    border: 1px solid gray;
+    pointer-events: none;
+}

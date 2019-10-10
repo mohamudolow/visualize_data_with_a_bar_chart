@@ -41,6 +41,12 @@ function drawBar(dataset) {
     .attr("transform", "translate(0, " + h + ")")
     .call(xAxis);
 
+    svg.append("text")
+        .attr("x", w/3)
+        .attr("y", h + 40)
+        .text("More Information: http://www.bea.gov/national/pdf/nipaguid.pdf")
+        .style("z-index", 4);
+    
     let gdp = dataset.map(item => item[1]);
 
     gdp.push(gdp[gdp.length-1] + (20000 - gdp[gdp.length-1]));
@@ -57,6 +63,13 @@ function drawBar(dataset) {
     .attr("transform", "rotate(0)")
     .call(yAxis);
 
+    
+    svg.append("text")
+        .attr("x", -300)
+        .attr("y", yAxisScale(dataset[(dataset.length-1)/2][1])/10 - 20)
+        .attr("transform", "rotate(-90)")
+        .text("Gross Domestic Product");
+    
     svg.selectAll("rect")
         .data(dataset)
         .enter()
